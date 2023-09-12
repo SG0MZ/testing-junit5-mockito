@@ -13,6 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -29,6 +30,9 @@ class OwnerControllerTest {
 	
 	@Mock
 	OwnerService ownerService;
+	
+	@Mock
+	Model model;
 	
 	@InjectMocks
 	OwnerController controller;
@@ -66,15 +70,21 @@ class OwnerControllerTest {
 		
 		//given
 		Owner owner = new Owner(1L,"Joe","FindMe");
+		InOrder inOrder = inOrder(ownerService, model);
 //		List<Owner> ownerList = new ArrayList<>();
 //		given(ownerService.findAllByLastNameLike(stringArgumentCaptor.capture())).willReturn(ownerList);
 		
 		//when
-		String viewName = controller.processFindForm(owner, bindingResult, Mockito.mock(Model.class));
+		String viewName = controller.processFindForm(owner, bindingResult, model);
 		
 		//then
 		assertThat("%FindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
 		assertThat("owners/ownersList").isEqualToIgnoringCase(viewName);
+		
+		//inorder asserts
+		inOrder.verify(ownerService).findAllByLastNameLike(anyString());
+		inOrder.verify(model).addAttribute(anyString(), anyList());
+		verifyNoMoreInteractions(model);
 	}
 	
 //	@Test
@@ -107,6 +117,7 @@ class OwnerControllerTest {
 		//then
 		assertThat("%Buck%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
 		assertThat("redirect:/owners/1").isEqualToIgnoringCase(viewName);
+		verifyZeroInteractions(model);
 	}
 	
 	@Test
@@ -119,10 +130,12 @@ class OwnerControllerTest {
 		
 		//when
 		String viewName = controller.processFindForm(owner, bindingResult, null);
+		verifyNoMoreInteractions(ownerService);
 		
 		//then
 		assertThat("%DontFindMe%").isEqualToIgnoringCase(stringArgumentCaptor.getValue());
 		assertThat("owners/findOwners").isEqualToIgnoringCase(viewName);
+		verifyZeroInteractions(model);
 	}
 	
 	@Test

@@ -81,7 +81,7 @@ class SpecialitySDJpaServiceTest {
 		service.deleteById(1L);
 		
 		//then
-		then(specialtyRepository).should(times(2)).deleteById(1L);
+		then(specialtyRepository).should(timeout(1000).times(2)).deleteById(1L);
 //		verify(specialtyRepository, times(2)).deleteById(1L);
 	}
 	
@@ -95,7 +95,7 @@ class SpecialitySDJpaServiceTest {
 		service.deleteById(1L);
 		
 		//then
-		then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+		then(specialtyRepository).should(timeout(1).atLeastOnce()).deleteById(1L);
 //		verify(specialtyRepository, atLeastOnce()).deleteById(1L);
 	}
 	
@@ -119,7 +119,7 @@ class SpecialitySDJpaServiceTest {
 		service.deleteById(1L);
 		
 		//then
-		then(specialtyRepository).should(atLeastOnce()).deleteById(1L);
+		then(specialtyRepository).should(timeout(200).atLeastOnce()).deleteById(1L);
 //		verify(specialtyRepository, atLeastOnce()).deleteById(1L);
 		then(specialtyRepository).should(never()).deleteById(5L);
 //		verify(specialtyRepository, never()).deleteById(5L);;
